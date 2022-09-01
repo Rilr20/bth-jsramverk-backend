@@ -1,10 +1,14 @@
+"use strict";
 const express = require("express");
 const morgan = require('morgan')
 const cors = require('cors');
-const database = require("./db/database");
 const app = express();
+const database = require("./db/database");
+const bodyParser = require("body-parser");
 const port = process.env.PORT || 1337
 
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(cors())
 if (process.env.NODE_ENV !== 'test') {
     app.use(morgan('combined'))
@@ -22,7 +26,7 @@ app.get("/", (req, res) => {
 app.get("/me", (req, res) => {
     res.json({
         data: {
-            description: "Hej! Jag heter Rikard"
+            msg: "Hej! Jag heter Rikard!"
         }
     });
 });
@@ -77,8 +81,6 @@ app.delete("/docs", (req, res) => {
     })
 })
 
-
-
 // Testing routes with method
 app.get("/user", (req, res) => {
     res.json({
@@ -87,8 +89,6 @@ app.get("/user", (req, res) => {
         }
     });
 });
-
-
 
 app.post("/user", (req, res) => {
     res.status(201).json({
