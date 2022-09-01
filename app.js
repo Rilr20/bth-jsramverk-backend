@@ -1,4 +1,5 @@
 "use strict";
+require('dotenv').config()
 const express = require("express");
 const morgan = require('morgan')
 const cors = require('cors');
@@ -6,6 +7,7 @@ const app = express();
 const database = require("./db/database");
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 1337
+
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -31,38 +33,38 @@ app.get("/me", (req, res) => {
     });
 });
 
-app.get("/docs", async, (req, res) => {
-    const db = await db.getDb();
+app.get("/docs", async (req, res) => {
+    const db = await database.getDb();
     const resultSet = await db.collection.find({}, {}).toArray()
     res.json(resultSet)
 })
 
 app.post("/docs", async (req, res) => {
     //CREATE document to database
-    const title = req.params.title
-    const text = req.params.text
+    console.log("I AM HERE");
+    const title = req.body.title
+    const text = req.body.text
 
     const db = await database.getDb();
     const resultSet = await db.collection.insertOne({ title: title, text: text })
-    if (resultSet.acknoledged) {
-        res.status(201).json({
-            data: {
-                msg: "201; Added an object!"
-            }
-        });
-    }
-    await db.client.close()
+    res.status(201).json({
+        data: {
+            msg: "201; Added an object!"
+        }
+    });
+    // await db.client.close()
 });
 
-app.put("/docs", (req, res) => {
+app.put("/docs", async (req, res) => {
     // UPDATE document in database
-    const title = req.params.title
-    const text = req.params.text
+    const title = req.body.title
+    const text = req.body.text
     const id = req.params.id
 
     const ObjectId = require('mongodb').ObjectId
     let filter = {_id: ObjectId(id)}
 
+    const db = await database.getDb();
     resultSet = await db.collection.updateOne(filter, {title:title, text:text})
 
     res.status(201).json({
