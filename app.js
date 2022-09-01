@@ -2,7 +2,6 @@ const express = require("express");
 const morgan = require('morgan')
 const cors = require('cors');
 const database = require("./db/database");
-const { ObjectId } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 1337
 
@@ -28,39 +27,43 @@ app.get("/me", (req, res) => {
     });
 });
 
-app.get("/docs")
+app.get("/docs", async, (req, res) => {
+    const db = await db.getDb();
+    const resultSet = await db.collection.find({}, {}).toArray()
+    res.json(resultSet)
+})
 
-app.post("/docs", (req, res) => {
+app.post("/docs", async (req, res) => {
     //CREATE document to database
+    const title = req.params.title
+    const text = req.params.text
 
-    let title = req.params.title
-    let text = req.params.text
     const db = await database.getDb();
     const resultSet = await db.collection.insertOne({ title: title, text: text })
+    if (resultSet.acknoledged) {
+        res.status(201).json({
+            data: {
+                msg: "201; Added an object!"
+            }
+        });
+    }
     await db.client.close()
-    res.status(201).json({
-        data: {
-            msg: "Got a POST request, sending back 201 Document Created"
-        }
-    });
 });
 
 app.put("/docs", (req, res) => {
     // UPDATE document in database
+    const title = req.params.title
+    const text = req.params.text
+    const id = req.params.id
 
-    let title = req.params.title
-    let text = req.params.text
-    let id = req.params.id
-    try {
-        db = await database.getDb()
-    } catch (error) {
-        
-    } finally {
-        await db.client.close()
-    }
+    const ObjectId = require('mongodb').ObjectId
+    let filter = {_id: ObjectId(id)}
+
+    resultSet = await db.collection.updateOne(filter, {title:title, text:text})
+
     res.status(201).json({
         data: {
-            msg: "Got a POST request, sending back 201 Document Created"
+            msg: "Got a POST request, sending back 201 Document Updated"
         }
     });
 });
@@ -116,38 +119,38 @@ app.use((req, res, next) => {
     next(err)
 })
 
-async function updateDocument(dsn, col, id, title, text) {
-    const ObjectId = require('mongodb').ObjectId;
-    const filter = { _id: ObjectId(body["_id"]) };
+// async function updateDocument(dsn, col, id, title, text) {
+//     const ObjectId = require('mongodb').ObjectId;
+//     const filter = { _id: ObjectId(body["_id"]) };
 
-    const client = await mongo.connect(dsn);
-    const db = await client.db();
-    const col = await db.collection(colName);
-    const res = await col.updateOne(filter, { title: title, text: text });
-    await client.close();
-    return res
-}
+//     const client = await mongo.connect(dsn);
+//     const db = await client.db();
+//     const col = await db.collection(colName);
+//     const res = await col.updateOne(filter, { title: title, text: text });
+//     await client.close();
+//     return res
+// }
 
-async function getAll(dsn, colName) {
-    const client = await mongo.connect(dsn);
-    const db = await client.db();
-    const col = await db.collection(colName);
-    const res = await col.find().toArray();
+// async function getAll(dsn, colName) {
+//     const client = await mongo.connect(dsn);
+//     const db = await client.db();
+//     const col = await db.collection(colName);
+//     const res = await col.find().toArray();
 
-    await client.close();
+//     await client.close();
 
-    return res;
-}
+//     return res;
+// }
 
-async function findInCollection(dsn, colName, criteria, projection, limit) {
-    const client = await mongo.connect(dsn);
-    const db = await client.db();
-    const col = await db.collection(colName);
-    const res = await col.find(criteria, projection).limit(limit).toArray();
+// async function findInCollection(dsn, colName, criteria, projection, limit) {
+//     const client = await mongo.connect(dsn);
+//     const db = await client.db();
+//     const col = await db.collection(colName);
+//     const res = await col.find(criteria, projection).limit(limit).toArray();
 
-    await client.close();
+//     await client.close();
 
-    return res;
-}
+//     return res;
+// }
 
 app.listen(port, () => console.log(`Example API listening on port ${port}!`));
