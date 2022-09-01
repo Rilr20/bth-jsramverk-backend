@@ -4,10 +4,9 @@ const collectionName = "docs"
 
 const database = {
     getDb: async function getDb() {
-        let dsn = `mongodb://localhost:27017/rilr20docs`;
-
+        let dsn = `mongodb+srv://${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@cluster0.8ifmldd.mongodb.net/?retryWrites=true&w=majority`
         if (process.env.NODE_ENV === 'test') {
-            dsn = "mongodb://localhost:27017/mumin";
+            dsn = "mongodb://localhost:27017";
         }
         const client = await mongo.connect(dsn, {
             useNewUrlParser: true,
