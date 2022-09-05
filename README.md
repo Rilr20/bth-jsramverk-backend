@@ -17,10 +17,10 @@ Få alla dokument
 
     (GET) /docs
 
-Skapa nytt dokument
+Skapa nytt dokument. Skicka med 'title', och 'text'
 
     (POST) /docs
 
-Upppdaterar dokumentet med {id}
+Upppdaterar dokumentet med {id}. Ändra 'title', eller 'text'
 
     (PUT) /docs/{id}
