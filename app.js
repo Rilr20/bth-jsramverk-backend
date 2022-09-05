@@ -41,18 +41,25 @@ app.get("/docs", async (req, res) => {
 
 app.post("/docs", async (req, res) => {
     //CREATE document to database
-    console.log("I AM HERE");
     const title = req.body.title
     const text = req.body.text
 
     const db = await database.getDb();
     const resultSet = await db.collection.insertOne({ title: title, text: text })
-    res.status(201).json({
-        data: {
-            msg: "201; Added an object!"
-        }
-    });
-    // await db.client.close()
+    await db.client.close()
+    if (resultSet.acknowledged) {
+        res.status(201).json({
+            data: {
+                msg: "201; Added an object!"
+            }
+        });
+    } else {
+        res.status(400).json({
+            data: {
+                msg: "400: something went wrong"
+            }
+        })
+    }
 });
 
 app.put("/docs", async (req, res) => {
