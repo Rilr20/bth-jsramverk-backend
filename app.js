@@ -62,23 +62,31 @@ app.post("/docs", async (req, res) => {
     }
 });
 
-app.put("/docs", async (req, res) => {
+app.put("/docs/:id", async (req, res) => {
     // UPDATE document in database
     const title = req.body.title
     const text = req.body.text
     const id = req.params.id
-
     const ObjectId = require('mongodb').ObjectId
-    let filter = {_id: ObjectId(id)}
+    let filter = { _id: ObjectId(id) }
 
     const db = await database.getDb();
-    resultSet = await db.collection.updateOne(filter, {title:title, text:text})
-
-    res.status(201).json({
-        data: {
-            msg: "Got a POST request, sending back 201 Document Updated"
-        }
-    });
+    let resultSet = await db.collection.updateOne(filter, { $set: { title: title, text: text } })
+    await db.client.close()
+    // if (resultSet.acknowledged) {
+        res.status(201).json({
+            data: {
+                msg: "Got a POST request, sending back 201 Document Updated"
+            }
+        });
+    // }
+    // else {
+    //     res.status(400).json({
+    //         data: {
+    //             msg: "400: something went wrong"
+    //         }
+    //     })
+    // }
 });
 
 app.delete("/docs", (req, res) => {
