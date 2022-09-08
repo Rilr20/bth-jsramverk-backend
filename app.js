@@ -8,7 +8,6 @@ const database = require("./db/database");
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 1337
 
-
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(cors())
@@ -74,9 +73,9 @@ app.put("/docs/:id", async (req, res) => {
     let resultSet = await db.collection.updateOne(filter, { $set: { title: title, text: text } })
     await db.client.close()
     // if (resultSet.acknowledged) {
-        res.status(201).json({
+        res.status(204).json({
             data: {
-                msg: "Got a POST request, sending back 201 Document Updated"
+                msg: "Got a PUT request, sending back 204 Document Updated"
             }
         });
     // }
@@ -170,4 +169,7 @@ app.use((req, res, next) => {
 //     return res;
 // }
 
-app.listen(port, () => console.log(`Example API listening on port ${port}!`));
+
+const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+module.exports = server;
