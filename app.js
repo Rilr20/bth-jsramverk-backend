@@ -104,7 +104,7 @@ app.delete("/docs", (req, res) => {
 app.get("/user", (req, res) => {
     res.json({
         data: {
-            msg: "Got a GET request, sending back default 200"
+            msg: ["Got a GET request, sending back default 200"]
         }
     });
 });
@@ -112,7 +112,7 @@ app.get("/user", (req, res) => {
 app.post("/user", (req, res) => {
     res.status(201).json({
         data: {
-            msg: "Got a POST request, sending back 201 Created"
+            users: []
         }
     });
 });
