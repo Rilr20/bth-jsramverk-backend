@@ -37,7 +37,7 @@ app.get("/docs", async (req, res) => {
     const db = await database.getDb();
     const resultSet = await db.collection.find({}, {}).toArray();
 
-    res.json(resultSet);
+    res.status(200).json({data: resultSet});
 });
 
 app.post("/docs", async (req, res) => {
@@ -91,13 +91,28 @@ app.put("/docs/:id", async (req, res) => {
     }
 });
 
-app.delete("/docs", (req, res) => {
+app.delete("/docs", async (req, res) => {
     // DELETE document in database
-    res.status(400).json({
-        data: {
-            msg: "nothing happened"
-        }
-    });
+    const id = req.body.id;
+    const db = await database.getDb();
+    const ObjectId = require('mongodb').ObjectId;
+    let filter = { _id: ObjectId(id) };
+
+    const resultSet = await db.collection.deleteOne(filter);
+
+    if (resultSet.acknowledged) {
+        res.status(200).json({
+            data: {
+                msg: `item with id ${id} is deleted`
+            }
+        });
+    } else {
+        res.status(400).json({
+            data: {
+                msg: "400 something went wrong"
+            }
+        });
+    }
 });
 
 // Testing routes with method
