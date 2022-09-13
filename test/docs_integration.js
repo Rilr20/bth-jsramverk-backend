@@ -10,8 +10,8 @@ chai.should();
 
 chai.use(chaiHttp);
 
-const database = require("../db/database.js");
-const collectionName = "testdocs";
+const database = require("../db/database");
+const collectionName = "docs";
 
 describe('Docs paths', () => {
     before(() => {
@@ -20,7 +20,7 @@ describe('Docs paths', () => {
 
             db.db.listCollections(
                 { name: collectionName }
-            )
+            ) 
                 .next()
                 .then(async function (info) {
                     if (info) {
@@ -37,30 +37,52 @@ describe('Docs paths', () => {
         });
     });
 
-
     describe('GET /docs', () => {
-        it('200 HAPPY PATH', (done) => {
+        it('200 PATH', (done) => {
             chai.request(server)
                 .get("/docs")
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.an("object");
                     res.body.data.should.be.an("array");
+                    res.body.data == ""
                     res.body.data.length.should.be.equal(0);
-
                     done();
                 });
         });
     })
-    // describe('POST /docs', () => {
-    //     it('201 PATH', (done) => {
-    //         chai.request(server)
-    //         .post("/docs")
-    //         .end((err,res)=> {
-    //             res.should.have.status(201)
-    //         })
-    //     })
-    // });
+    describe('POST /docs', () => {
+
+        it('201 creating document', (done) => {
+            let docs = {
+                title: "title",
+                text: "text"
+            }
+            chai.request(server)
+            .post("/docs")
+            .send(docs)
+            .end((err,res)=> {
+                res.should.have.status(201)
+                res.body.should.be.an("object")
+                res.body.should.have.property("data")
+                res.body.data.should.have.property("msg")
+
+                done();
+            });
+        })
+
+        it('200 PATH', (done) => {
+            chai.request(server)
+                .get("/docs")
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.body.should.be.an("object")
+                    res.body.data.should.be.an("array")
+                    res.body.data.length.should.be.equal(1);
+                    done();
+                });
+        });
+    });
     // describe('PUT /docs', () => {
     //     it('200 PATH', (done) => {
     //         chai.request(server)
