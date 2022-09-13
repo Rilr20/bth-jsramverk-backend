@@ -7,6 +7,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 1337;
 const docs = require('./routes/docs');
+const user = require('./routes/user');
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 app.use('/docs', docs);
+app.use('/user', user);
 
 app.get("/", (req, res) => {
     const data = {
@@ -33,33 +35,6 @@ app.get("/me", (req, res) => {
             msg: "Hej! Jag heter Rikard!"
         }
     });
-});
-
-// Testing routes with method
-app.get("/user", (req, res) => {
-    res.json({
-        data: {
-            msg: ["Got a GET request, sending back default 200"]
-        }
-    });
-});
-
-app.post("/user", (req, res) => {
-    res.status(201).json({
-        data: {
-            users: []
-        }
-    });
-});
-
-app.put("/user", (req, res) => {
-    // PUT requests should return 204 No Content
-    res.status(204).send();
-});
-
-app.delete("/user", (req, res) => {
-    // DELETE requests should return 204 No Content
-    res.status(204).send();
 });
 
 app.use((req, res, next) => {
