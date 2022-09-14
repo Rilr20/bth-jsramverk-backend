@@ -28,3 +28,5 @@ router.delete("/", (req, res) => {
     // DELETE requests should return 204 No Content
     res.status(204).send();
 });
+
+module.exports = router;
