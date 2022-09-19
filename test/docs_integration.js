@@ -16,7 +16,7 @@ const collectionName = "docs";
 describe('Docs paths', () => {
     before(() => {
         return new Promise(async (resolve) => {
-            const db = await database.getDb();
+            const db = await database.getDb(collectionName);
             db.db.listCollections(
                 { name: collectionName }
             )
