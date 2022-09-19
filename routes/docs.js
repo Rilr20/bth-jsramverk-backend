@@ -3,7 +3,7 @@ const router = express.Router();
 const database = require("../db/database");
 
 router.get("/", async (req, res) => {
-    const db = await database.getDb();
+    const db = await database.getDb("docs");
     const resultSet = await db.collection.find({}, {}).toArray();
 
     res.status(200).json({ data: resultSet });
@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
     const title = req.body.title;
     const text = req.body.text;
 
-    const db = await database.getDb();
+    const db = await database.getDb("docs");
     const resultSet = await db.collection.insertOne({ title: title, text: text });
 
     await db.client.close();
@@ -43,7 +43,7 @@ router.put("/:id", async (req, res) => {
     const ObjectId = require('mongodb').ObjectId;
     let filter = { _id: ObjectId(id) };
 
-    const db = await database.getDb();
+    const db = await database.getDb("docs");
     let resultSet = await db.collection.updateOne(filter, { $set: { title: title, text: text } });
 
     await db.client.close();
@@ -65,7 +65,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/", async (req, res) => {
     // DELETE document in database
     const id = req.body.id;
-    const db = await database.getDb();
+    const db = await database.getDb("docs");
     const ObjectId = require('mongodb').ObjectId;
     let filter = { _id: ObjectId(id) };
 
