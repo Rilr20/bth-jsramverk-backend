@@ -57,8 +57,22 @@ const io = require("socket.io")(httpServer, {
     }
 });
 
+let throttleTimer;
+
 io.sockets.on('connection', function (socket) {
-    console.log(socket.id); // Nått lång och slumpat
+    socket.on('create', function (room) {
+        socket.join(room);
+    });
+
+    socket.on("docsData", function (data) {//kan behövas ändras
+        socket.to(data["_id"]).emit("docsData", data);
+
+        clearTimeout(throttleTimer);
+        console.log("writing");
+        throttleTimer = setTimeout(function () {
+            console.log("now it should save to database");
+        }, 2000);
+    });
 });
 
 const server = httpServer.listen(port, () => console.log(`Example app listening on port ${port}!`));
