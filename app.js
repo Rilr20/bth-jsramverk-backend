@@ -4,6 +4,7 @@ const express = require("express");
 const morgan = require('morgan');
 const cors = require('cors');
 const app = express();
+const httpServer = require("http").createServer(app);
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 1337;
 const docs = require('./routes/docs');
@@ -49,6 +50,17 @@ app.use((req, res, next) => {
     next(err);
 });
 
-const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+const io = require("socket.io")(httpServer, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"]
+    }
+});
+
+io.sockets.on('connection', function (socket) {
+    console.log(socket.id); // Nått lång och slumpat
+});
+
+const server = httpServer.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
 module.exports = server;
