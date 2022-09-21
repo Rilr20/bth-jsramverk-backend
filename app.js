@@ -9,6 +9,7 @@ const bodyParser = require("body-parser");
 const port = process.env.PORT || 1337;
 const docs = require('./routes/docs');
 const user = require('./routes/user');
+const documents = require('./modules/documents');
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -52,7 +53,7 @@ app.use((req, res, next) => {
 
 const io = require("socket.io")(httpServer, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: "*",
         methods: ["GET", "POST"]
     }
 });
@@ -60,20 +61,27 @@ const io = require("socket.io")(httpServer, {
 let throttleTimer;
 
 io.sockets.on('connection', function (socket) {
-    socket.on('create', function (room) {
+    console.log("socket id: " + socket.id); // Nått lång och slumpat
+    socket.on('create', function(room) {
+        console.log(`Room with id: ${room} created`);
+        socket.broadcast.emit("create", room);
         socket.join(room);
     });
-
-    socket.on("docsData", function (data) {//kan behövas ändras
-        socket.to(data["_id"]).emit("docsData", data);
+    socket.on("doc", function (data) {
+        // console.log("tja" + data._id, + " " + data.text);
+        // console.log(`Recieved data from room ${data._id}`);
+        console.log(data);
+        socket.to(data["_id"]).emit("doc", data);
 
         clearTimeout(throttleTimer);
         console.log("writing");
-        throttleTimer = setTimeout(function () {
+        throttleTimer = setTimeout(function() {
+            documents.updateDocument(data._id, data.text);
             console.log("now it should save to database");
         }, 2000);
     });
 });
+
 
 const server = httpServer.listen(port, () => console.log(`Example app listening on port ${port}!`));
 

@@ -7,12 +7,8 @@ const database = {
         let mngdb = "mongodb+srv://";
         let dsn = `${mngdb}${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@${clstr}`;
 
-        console.log(dsn);
+        // console.log(dsn);
         if (test) {
-            console.log("test server");
-            console.log("test server");
-            console.log("test server");
-            console.log("test server");
             dsn = "mongodb://127.0.0.1:27017";
         }
 
