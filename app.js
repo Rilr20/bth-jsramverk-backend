@@ -39,17 +39,17 @@ app.get("/me", (req, res) => {
     });
 });
 
-app.use((req, res, next) => {
-    console.log(req.method);
-    console.log(req.path);
-    next();
-});
-app.use((req, res, next) => {
-    var err = new Error("Not Found");
+// app.use((req, res, next) => {
+//     console.log(req.method);
+//     console.log(req.path);
+//     next();
+// });
+// app.use((req, res, next) => {
+//     var err = new Error("Not Found");
 
-    err.status = 404;
-    next(err);
-});
+//     err.status = 404;
+//     next(err);
+// });
 
 const io = require("socket.io")(httpServer, {
     cors: {

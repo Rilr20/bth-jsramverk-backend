@@ -1,21 +1,36 @@
 const express = require('express');
 const router = express.Router();
 const database = require("../db/database");
+const auth = require('../modules/auth');
 
-router.get("/", async (req, res) => {
-    const db = await database.getDb("docs");
-    const resultSet = await db.collection.find({}, {}).toArray();
 
-    res.status(200).json({ data: resultSet });
-});
+
+router.get(
+    "/",
+    (req, res, next) => auth.checkToken(req, res, next),
+    async (req, res) => {
+        console.log("getting docs");
+        const db = await database.getDb("docs");
+        const resultSet = await db.collection.find({}, {}).toArray();
+
+        res.status(200).json({ data: resultSet });
+    }
+);
+
+// router.get("/", async (req, res) => {
+
+
+// });
 
 router.post("/", async (req, res) => {
     //CREATE document to database
     const title = req.body.title;
     const text = req.body.text;
+    const email = req.body.email;
+    const code = req.body.code;
 
     const db = await database.getDb("docs");
-    const resultSet = await db.collection.insertOne({ title: title, text: text });
+    const resultSet = await db.collection.insertOne({ title: title, text: text, email: email, code: code });
 
     await db.client.close();
     if (resultSet.acknowledged) {
