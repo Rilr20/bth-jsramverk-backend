@@ -3,18 +3,21 @@ const jwt = require('jsonwebtoken');
 
 const auth = {
     checkToken: function (req, res, next) {
-        const token = req.headers['x-access-tokenn'];
+        const token = req.headers['x-access-token'];
 
+        console.log(process.env.JWT_SECRET);
         jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
             if (err) {
                 return res.status(401).json({
                     errors: {
                         status: 401,
-                        msg: "token is not valid"
+                        message: "Token is not valid.",
+                        err: err
                     }
                 });
             }
 
+            // Valid token send on the request
             next();
         });
     },
@@ -31,7 +34,7 @@ const auth = {
 
             if (result) {
                 const payload = { email: user.email };
-                const secret = process.env.JWT_TOKEN;
+                const secret = process.env.JWT_SECRET;
 
                 const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 
@@ -45,7 +48,7 @@ const auth = {
             }
 
             return res.status(401).json({
-                errosr: {
+                errors: {
                     status: 401,
                     msg: "password is inccorrect"
                 }
