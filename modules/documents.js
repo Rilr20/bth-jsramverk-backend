@@ -22,7 +22,7 @@ const documents = {
 
             await db.collection.updateOne(filter, updateDoc, options);
         } catch (e) {
-            console.error(e.message);
+            console.error(e.msg);
         } finally {
             await db.client.close();
         }
