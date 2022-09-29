@@ -2,13 +2,13 @@ const mongo = require("mongodb").MongoClient;
 // const collectionName = "docs";
 
 const database = {
-    getDb: async function getDb(collectionName) {
+    getDb: async function getDb(collectionName, test=false) {
         let clstr = "cluster0.8ifmldd.mongodb.net/?retryWrites=true&w=majority";
         let mngdb = "mongodb+srv://";
         let dsn = `${mngdb}${process.env.ATLAS_USERNAME}:${process.env.ATLAS_PASSWORD}@${clstr}`;
 
         // console.log(dsn);
-        if (process.env.NODE_ENV === 'test') {
+        if (process.env.NODE_ENV === 'test' || test) {
             dsn = "mongodb://127.0.0.1:27017";
         }
 
