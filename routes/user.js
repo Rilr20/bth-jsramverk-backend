@@ -84,7 +84,7 @@ router.post("/register", async (req, res) => {
         let resultSet = await db.collection.find(filter, {}).toArray();
 
         if (resultSet.length !== 0) {
-            console.log("no user found");
+            // console.log("user found");
             res.status(401).json({
                 errors: {
                     status: 401,
@@ -118,7 +118,7 @@ router.post("/register", async (req, res) => {
 
 router.get("/:email", async (req, res) => {
     console.log("tja");
-    const email = req.params.email;
+    const email = req.params.email.toLowerCase();
 
     let filter = { email: email };
 
@@ -134,9 +134,10 @@ router.get("/:email", async (req, res) => {
                 msg: "no user found"
             }
         });
+    } else {
+        res.status(200).json({ data: resultSet });
     }
     // if (resultSet.acknowledged) {
-    res.status(200).json({ data: resultSet });
     // }
 });
 
