@@ -21,13 +21,15 @@ const RootQueryType = new GraphQLObjectType({
             }
         },
         docsbyemail: {
-            type: DocType,
+            type: new GraphQLList(DocType),
             description: 'List of all docs',
             args: {
                 email: { type: GraphQLString }
             },
-            resolve: async function (parent, arg) {
-                return await getDocsByEmail(arg.email);
+            resolve: async function (parent, args) {
+                const docs = await getDocsByEmail(args.email);
+
+                return docs;
             }
         }
     })
