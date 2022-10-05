@@ -4,12 +4,19 @@ const express = require("express");
 const morgan = require('morgan');
 const cors = require('cors');
 const app = express();
+const visual = false;
+const { graphqlHTTP } = require('express-graphql');
+const {
+    GraphQLSchema
+} = require("graphql");
+const RootQueryType = require("./graphql/root.js");
 const httpServer = require("http").createServer(app);
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 1337;
 const docs = require('./routes/docs');
 const user = require('./routes/user');
 const documents = require('./modules/documents');
+
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -20,6 +27,15 @@ if (process.env.NODE_ENV !== 'test') {
 
 app.use('/docs', docs);
 app.use('/user', user);
+
+const schema = new GraphQLSchema({
+    query: RootQueryType
+});
+
+app.use('/graphql', graphqlHTTP({
+    schema: schema,
+    graphiql: visual
+}));
 
 app.get("/", (req, res) => {
     const data = {
