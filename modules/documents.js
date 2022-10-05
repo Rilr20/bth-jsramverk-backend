@@ -4,7 +4,7 @@ const ObjectId = require('mongodb').ObjectId;
 const collectionName = "docs";
 const documents = {
 
-    updateDocument: async function updateWine(id, text) {
+    updateDocument: async function (id, text) {
         let db;
 
         try {
@@ -27,7 +27,28 @@ const documents = {
             await db.client.close();
         }
     },
+    getAllDocs: async function () {
+        let db = await database.getDb(collectionName);
 
+        const resultSet = await db.collection.find({}, {}).toArray();
+
+        return resultSet;
+    },
+    getDocsByEmail: async function(email) {
+        let db = await database.getDb(collectionName);
+
+        const resultSet = await db.collection.find({}, {}).toArray();
+        let res = [];
+
+        resultSet.forEach(element => {
+            for (let i = 0; i < element.access.length; i++) {
+                if (element.access[i].user === email) {
+                    res.push(element);
+                }
+            }
+        });
+        return res;
+    }
 };
 
 module.exports = documents;
