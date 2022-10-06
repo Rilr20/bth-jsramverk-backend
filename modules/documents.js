@@ -42,7 +42,7 @@ const documents = {
 
         resultSet.forEach(element => {
             for (let i = 0; i < element.access.length; i++) {
-                if (element.access[i].user === email) {
+                if (element.access.length !== 0 && element.access[i].user === email) {
                     res.push(element);
                 }
             }
