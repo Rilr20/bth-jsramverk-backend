@@ -2,8 +2,8 @@ const {
     GraphQLObjectType,
     GraphQLString,
     GraphQLList,
-    GraphQLFloat,
-    GraphQLNonNull
+    // GraphQLFloat,
+    // GraphQLNonNull
 } = require('graphql');
 const { getAllDocs, getDocsByEmail } = require('../modules/documents');
 const DocType = require('./docs');
