@@ -4,9 +4,14 @@ const jwt = require('jsonwebtoken');
 const auth = {
     checkToken: function (req, res, next) {
         const token = req.headers['x-access-token'];
+        let secret = process.env.JWT_SECRET;
+
+        if (process.env.NODE_ENV === 'test') {
+            secret = "8927345684584568456868468456845680670645685980257890125789126124";
+        }
 
         // console.log(process.env.JWT_SECRET);
-        jwt.verify(token, process.env.JWT_SECRET, function (err) {
+        jwt.verify(token, secret, function (err) {
             if (err) {
                 return res.status(401).json({
                     errors: {
