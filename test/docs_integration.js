@@ -2,16 +2,21 @@
 process.env.NODE_ENV = 'test';
 require('dotenv').config();
 
+const jwt = require('jsonwebtoken');
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../app.js');
 
 chai.should();
-
 chai.use(chaiHttp);
+
+
 
 const database = require("../db/database");
 const collectionName = "docs";
+const payload = { email: "test@test.com" };
+const secret = process.env.JWT_SECRET;
+const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 
 describe('Docs paths', () => {
     before(() => {
@@ -40,6 +45,7 @@ describe('Docs paths', () => {
         it('200 PATH', (done) => {
             chai.request(server)
                 .get("/docs")
+                .set('x-access-token', token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.an("object");
@@ -55,7 +61,10 @@ describe('Docs paths', () => {
         it('201 creating document', (done) => {
             let docs = {
                 title: "title",
-                text: "text"
+                text: "text",
+                email: "test@email.com",
+                code: false,
+                write: true,
             }
             chai.request(server)
                 .post("/docs")
@@ -73,6 +82,7 @@ describe('Docs paths', () => {
         it('200 PATH', (done) => {
             chai.request(server)
                 .get("/docs")
+                .set('x-access-token', token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.body.should.be.an("object")
@@ -85,11 +95,15 @@ describe('Docs paths', () => {
     });
     describe('PUT /docs', () => {
         let id;
-        let docs = {
-            title: "title",
-            text: "text"
-        }
+
         it('201 creating document', (done) => {
+            let docs = {
+                title: "title",
+                text: "text",
+                email: "test@email.com",
+                code: false,
+                write: true,
+            }
             chai.request(server)
                 .post("/docs")
                 .send(docs)
@@ -103,14 +117,16 @@ describe('Docs paths', () => {
                     done();
                 });
         })
-        docs = {
-            title: "title2",
-            text: "text2"
-        }
+
         // UPDATE PUT
         it('Updating document that was created', (done) => {
+            let docs = {
+                title: "title2",
+                text: "text2"
+            }
             chai.request(server)
             .put(`/docs/${id}`)
+            // .set('x-access-token', token)
             .send(docs)
             .end((err,res)=> {
                 res.should.have.status(204);
