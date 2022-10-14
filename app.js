@@ -15,6 +15,7 @@ const bodyParser = require("body-parser");
 const port = process.env.PORT || 1337;
 const docs = require('./routes/docs');
 const user = require('./routes/user');
+const email = require('./routes/email');
 const documents = require('./modules/documents');
 
 
@@ -27,6 +28,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 app.use('/docs', docs);
 app.use('/user', user);
+app.use('/email', email);
 
 const schema = new GraphQLSchema({
     query: RootQueryType
