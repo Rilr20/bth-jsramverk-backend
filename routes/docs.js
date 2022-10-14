@@ -85,6 +85,95 @@ router.post("/", async (req, res) => {
     }
 });
 
+function isEmailInArray(email, array) {
+    let duplicate = false;
+
+    array.access.forEach(element => {
+        //email already exists
+        if (element.user == email) {
+            duplicate = true;
+        }
+    });
+    return duplicate;
+}
+
+router.put("/invite", async (req, res) => {
+    console.log(req.body);
+    const ObjectId = require('mongodb').ObjectId;
+    const documentId = req.body.documentId;
+    const user = req.body.email;
+    const permission = req.body.permission;
+    const db = await database.getDb("docs");
+
+    console.log(documentId);
+    console.log(user);
+    console.log(permission);
+
+    //update document with id
+    // const db = await database.getDb("docs");
+    let filter = { _id: ObjectId(documentId) };
+
+    let resultSet = await db.collection.findOne(filter, {});
+
+    if (resultSet === null) {
+        res.status(400).json({
+            data: {
+                status: 400,
+                msg: `Document doesn't exist`
+            }
+        });
+    } else {
+        let emailInArray = isEmailInArray(user, resultSet);
+
+        console.log(emailInArray);
+        if (!emailInArray) {
+            let accesArray = resultSet.access;
+
+            //Checka att användaren inte redan finns där
+            accesArray.push({ user: user, write: permission });
+            // Ändra i dokumentets access arraay
+            let err = await addDocToUser(documentId, permission, user);
+
+            if (err === "err") {
+                res.status(400).json({
+                    data: {
+                        msg: "400: user doesn't exist"
+                    }
+                });
+            } else {
+                resultSet = await db.collection.updateOne(filter, { $set: { access: accesArray } });
+
+                console.log(resultSet);
+                //  add document to the user
+                console.log(err);
+                if (resultSet.acknowledged) {
+                    res.status(204).json({
+                        data: {
+                            status: 204,
+                            msg: `document was updated`
+                        }
+                    });
+                } else {
+                    res.status(400).json({
+                        data: {
+                            status: 400,
+                            msg: `Something went wrong`
+                        }
+                    });
+                }
+            }
+        } else {
+            res.status(400).json({
+                data: {
+                    status: 400,
+                    msg: `User already has access`
+                }
+            });
+        }
+    }
+});
+
+
 router.put("/:id", async (req, res) => {
     // UPDATE document in database
     const title = req.body.title;
@@ -135,5 +224,7 @@ router.delete("/", async (req, res) => {
         });
     }
 });
+
+
 
 module.exports = router;
