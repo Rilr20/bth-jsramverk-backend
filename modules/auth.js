@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 /*eslint max-len: ["error", { "code": 141 }]*/
-const secret = process.env.NODE_ENV === 'test' ? "8927345684584568456868468456845680670645685980257890125789126124" : process.env.JWT_SECRET;
+const secret = process.env.NODE_ENV === 'test' ? "SG.7345684584568456868468456845680670645685980257890125789126124" : process.env.JWT_SECRET;
 
 const auth = {
     checkToken: function (req, res, next) {

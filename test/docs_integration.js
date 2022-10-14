@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 const database = require("../db/database");
 const collectionName = "docs";
 const payload = { email: "test@test.com" };
-const secret = "8927345684584568456868468456845680670645685980257890125789126124";
+const secret = "SG.7345684584568456868468456845680670645685980257890125789126124";
 const token = jwt.sign(payload, secret, { expiresIn: '1h' });
 
 describe('Docs paths', () => {
