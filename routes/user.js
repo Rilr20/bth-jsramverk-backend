@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const database = require("../db/database");
 
-const ObjectId = require('mongodb').ObjectId;
+// const ObjectId = require('mongodb').ObjectId;
 const bcrypt = require('bcryptjs');
 const auth = require('../modules/auth');
 const saltRounds = 10;
@@ -10,13 +10,13 @@ const saltRounds = 10;
 const collectionName = "users";
 
 // Testing routes with method
-router.get("/", async (req, res) => {
-    res.json({
-        data: {
-            msg: ["Got a GET request, sending back default 200"]
-        }
-    });
-});
+// router.get("/", async (req, res) => {
+//     res.json({
+//         data: {
+//             msg: ["Got a GET request, sending back default 200"]
+//         }
+//     });
+// });
 
 router.post("/login", async (req, res) => {
     const email = req.body.email;
@@ -62,7 +62,6 @@ router.post("/register", async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    console.log("hej hej hej");
     if (!email || !password) {
         return res.status(400).json({
             errors: {
@@ -96,7 +95,7 @@ router.post("/register", async (req, res) => {
 
             await db.client.close();
 
-            console.log(resultSet);
+            console.log("resultSet");
             if (resultSet.acknowledged) {
                 res.status(201).json({
                     data: {
@@ -117,7 +116,6 @@ router.post("/register", async (req, res) => {
 });
 
 router.get("/:email", async (req, res) => {
-    console.log("tja");
     const email = req.params.email.toLowerCase();
 
     let filter = { email: email };

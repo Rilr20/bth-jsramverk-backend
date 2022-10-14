@@ -27,7 +27,7 @@ async function addDocToUser(docId, permission, email) {
 
         // console.log(resultSet);
         if (resultSet !== 0) {
-            console.log("här är jag");
+            // console.log("här är jag");
             if (docs === undefined) {
                 docs = [];
                 docs[0] = {

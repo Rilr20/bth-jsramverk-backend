@@ -5,8 +5,8 @@ const auth = {
     checkToken: function (req, res, next) {
         const token = req.headers['x-access-token'];
 
-        console.log(process.env.JWT_SECRET);
-        jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
+        // console.log(process.env.JWT_SECRET);
+        jwt.verify(token, process.env.JWT_SECRET, function (err) {
             if (err) {
                 return res.status(401).json({
                     errors: {
