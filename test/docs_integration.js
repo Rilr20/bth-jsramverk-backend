@@ -97,16 +97,15 @@ describe('Docs paths', () => {
         let id;
 
         it('201 creating document', (done) => {
-            let docs = {
-                title: "title",
-                text: "text",
-                email: "test@email.com",
-                code: false,
-                write: true,
-            }
             chai.request(server)
                 .post("/docs")
-                .send(docs)
+                .send({
+                    title: "title",
+                    text: "text",
+                    email: "test@email.com",
+                    code: false,
+                    write: true,
+                })
                 .end((err, res) => {
                     res.should.have.status(201)
                     res.body.should.be.an("object")
@@ -120,19 +119,17 @@ describe('Docs paths', () => {
 
         // UPDATE PUT
         it('Updating document that was created', (done) => {
-            let docs = {
-                title: "title2",
-                text: "text2"
-            }
             chai.request(server)
-            .put(`/docs/${id}`)
-            // .set('x-access-token', token)
-            .send(docs)
-            .end((err,res)=> {
-                res.should.have.status(204);
+                .put(`/docs/${id}`)
+                .send({
+                    title: "title2",
+                    text: "text2"
+                })
+                .end((err, res) => {
+                    res.should.have.status(204);
 
-                done();
-            })
+                    done();
+                })
         })
     });
     // describe('DELETE /docs', () => {
